@@ -16,5 +16,15 @@ CHIP PC {
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    // Check if the register should be changed
+    Or(a=reset, b=load, out=or0);
+    Or(a=or0, b=inc, out=change);
+
+    // Handle flags
+    Mux16(a=outinc, b=in, sel=load, out=outmuxload);
+    Mux16(a=outmuxload, b=false, sel=reset, out=outmuxreset);
+
+    // Handle output
+    Register(in=outmuxreset, load=change, out=out, out=outr0);
+    Inc16(in=outr0, out=outinc);
 }
