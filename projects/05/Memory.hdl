@@ -22,10 +22,19 @@
  * Screen and Keyboard chip specifications given in the book.
  */
 
+// 0x6000 = 0b 0110 0000 0000 0000
+// 0x5FFF = 0b 0101 1111 1111 1111
+// 0x4000 = ob 0100 0000 0000 0000
+
 CHIP Memory {
     IN in[16], load, address[15];
     OUT out[16];
 
     PARTS:
-    // Put your code here:
+    DMux(in=load, sel=address[14], a=loadram, b=loadscreen);
+    RAM16K(in=in, load=loadram, address=address[0..13], out=ram);
+    Screen(in=in, load=loadscreen, address=address[0..12], out=screen);
+    Keyboard(out=kbd);
+    Mux16(a=screen, b=kbd, sel=address[13], out=kbdorscreen);
+    Mux16(a=ram, b=kbdorscreen, sel=address[14], out=out);
 }

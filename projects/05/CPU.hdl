@@ -39,5 +39,54 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    // Instruction breakdown:
+    // ACsel | 1 | 1 | AMsel | zx | nx | zy | ny | f | no | loadA | loadD | writeM | j1 | j2 | j3
+    //  15             12     11   10    9    8   7    6     5       4        3      2    1    0
+
+    // Determine whether an A instruction is being loaded or a C instruction is being
+    // interpreted
+    Mux16(a=instruction, b=ALUout, sel=instruction[15], out=AinstructionorALUout);
+
+    // Determine whether A register should load a new value
+    // We load if we have an A instruction or if we have a C instruction
+    // that has a destination of A
+    Not(in=instruction[15], out=notinstruction15);
+    Or(a=instruction[5], b=notinstruction15, out=loadA);
+    ARegister(in=AinstructionorALUout, load=loadA, out=Aout, out[0..14]=addressM);
+
+    // Determine whether D register should load a new value
+    // We only load D when there is a C instruction and the destination is D
+    And(a=instruction[4], b=instruction[15], out=loadD);
+    DRegister(in=ALUout, load=loadD, out=Dout);
+
+    // Determine whether we are reading from memory or using the A register
+    Mux16(a=Aout, b=inM, sel=instruction[12], out=AorM);
+
+    // Determine action of program counter
+    Not(in=ng, out=notng);
+    Not(in=zr, out=notzr);
+    // We load if we have a c instruction and are jumping
+    // Check if ALU output matches jump flags
+    // JLT: j1 & !zr & ng
+    And(a=instruction[2], b=notzr, out=andJLT);
+    And(a=andJLT, b=ng, out=JLT);
+    // JEQ: j2 & zr
+    And(a=instruction[1], b=zr, out=JEQ);
+    // JGT: j3 & !zr & !ng
+    And(a=instruction[0], b=notzr, out=andJGT);
+    And(a=andJGT, b=notng, out=JGT);
+    // JMP: JLT | JEQ | JGT
+    Or(a=JLT, b=JEQ, out=orJMP);
+    Or(a=orJMP, b=JGT, out=JMP);
+    // Make sure we have a C instruction and we are jumping
+    And(a=instruction[15], b=JMP, out=loadPC);
+    PC(in=Aout, load=loadPC, inc=true, reset=reset, out[0..14]=pc);
+
+    // Send control flags to ALU and retrieve status flags from ALU
+    // Status flags used for determining jump instructions
+    ALU(x=Dout, y=AorM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, out=outM, zr=zr, ng=ng);
+
+    // Determine whether we are writing to M or not
+    // If C instruction and the destination is M we writeM
+    And(a=instruction[15], b=instruction[3], out=writeM);
 }
