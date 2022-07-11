@@ -2,7 +2,7 @@
 #define CODE_H
 
 #include <bitset>
-#include <map>
+#include <unordered_map>
 
 /**
  * @brief Translates Hack assembly language mnemonics into binary codes.
@@ -37,9 +37,9 @@ public:
     std::bitset<3> jump(std::string jump_mnemonic);
 
 private:
-    std::map<std::string,std::bitset<3>> destinations;
-    std::map<std::string,std::bitset<7>> computations;
-    std::map<std::string,std::bitset<3>> jumps;
+    std::unordered_map<std::string,std::bitset<3>> destinations;
+    std::unordered_map<std::string,std::bitset<7>> computations;
+    std::unordered_map<std::string,std::bitset<3>> jumps;
 };
 
 #endif
