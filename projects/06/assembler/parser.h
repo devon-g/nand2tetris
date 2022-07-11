@@ -33,11 +33,24 @@ public:
     bool hasMoreCommands();
 
     /**
+     * @brief Get the current command
+     * 
+     * @return std::string - The current command
+     */
+    std::string getCurrentCommand();
+
+    /**
      * @brief Reads the next command from the input and makes it the current
      * command. Should be called only if hasMoreCommands() is true.
      * Initially there is no current command.
      */
     void advance();
+
+    /**
+     * @brief Move parser back to beginning of program and reset hasMoreCommands
+     * flag. 
+     */
+    void reset();
 
     /**
      * @brief Returns the type of current command

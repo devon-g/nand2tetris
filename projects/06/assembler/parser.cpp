@@ -16,24 +16,38 @@ bool Parser::hasMoreCommands()
     return this->has_more_commands;
 }
 
+std::string Parser::getCurrentCommand()
+{
+    return this->current_command;
+}
+
 void Parser::advance()
 {
     // Get next line from file
     std::string current_line;
-    this->has_more_commands = !std::getline(this->input_file, current_line).eof();
-    current_line.erase(remove_if(current_line.begin(), current_line.end(), isspace), current_line.end());
 
     // Ignore lines that are empty or are comments
-    while (this->has_more_commands && (isspace(current_line.front()) || current_line.front() == '/'))
+    do
     {
-        current_line.erase(remove_if(current_line.begin(), current_line.end(), isspace), current_line.end());
         this->has_more_commands = !std::getline(this->input_file, current_line).eof();
+        current_line.erase(remove_if(current_line.begin(), current_line.end(), isspace), current_line.end());
     }
+    while (this->has_more_commands && (isspace(current_line.front()) || current_line.front() == '/'));
 
-    // Clean whitespace from line
-    current_line.erase(remove_if(current_line.begin(), current_line.end(), isspace), current_line.end());
+    // Strip inline comments
+    size_t comment_pos = current_line.find('/');
+    if (comment_pos != std::string::npos)
+        current_line = current_line.substr(0, comment_pos);
 
     this->current_command = current_line;
+}
+
+void Parser::reset()
+{
+    this->input_file.clear();
+    this->input_file.seekg(0);
+    this->current_command = "";
+    this->has_more_commands = !this->input_file.eof();
 }
 
 COMMAND_TYPE Parser::commandType()
