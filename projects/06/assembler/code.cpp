@@ -46,7 +46,7 @@ Code::Code()
     jumps[""] = 0b000;
     jumps["JGT"] = 0b001;
     jumps["JEQ"] = 0b010;
-    jumps["JGE"] = 0b010;
+    jumps["JGE"] = 0b011;
     jumps["JLT"] = 0b100;
     jumps["JNE"] = 0b101;
     jumps["JLE"] = 0b110;
