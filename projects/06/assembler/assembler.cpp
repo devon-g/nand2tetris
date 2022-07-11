@@ -10,7 +10,7 @@ int main(int argc, char** argv)
     // Output file in same directory as input file but replace extension with
     // .hack
     output_filepath = output_filepath.substr(0, output_filepath.find_last_of('.'));
-    output_file.open(output_filepath + ".hack");
+    output_file.open(output_filepath + "_.hack");
 
     Parser p(argv[1]);
     Code c;

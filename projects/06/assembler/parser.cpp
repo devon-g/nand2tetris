@@ -83,6 +83,10 @@ std::string Parser::dest()
 std::string Parser::comp()
 {
     // C_COMMAND: dest=comp;jump
+    // = index: 4
+    // ; index: 9
+    // C_COMMAND size: 14
+
     // Find index of = in C_COMMAND if present
     size_t equal_pos = this->current_command.find('=');
     // Find index of ; in C_COMMAND if present
@@ -92,11 +96,13 @@ std::string Parser::comp()
     std::string comp = "";
     // If = present and ; not present
     if (equal_pos != std::string::npos && semicolon_pos == std::string::npos)
-        comp = this->current_command.substr(equal_pos + 1, this->current_command.size() - equal_pos);
+        comp = this->current_command.substr(equal_pos + 1, this->current_command.size() - 1 - equal_pos);
     // If = present and ; present
     if (equal_pos != std::string::npos && semicolon_pos != std::string::npos)
-        comp = this->current_command.substr(equal_pos + 1, semicolon_pos - equal_pos);
-
+        comp = this->current_command.substr(equal_pos + 1, semicolon_pos - 1 - equal_pos);
+    // If = not present and ; present
+    if (equal_pos == std::string::npos && semicolon_pos != std::string::npos)
+        comp = this->current_command.substr(0, semicolon_pos);
     // Either return a computation or an empty string
     return comp;
 }
@@ -111,7 +117,7 @@ std::string Parser::jump()
     std::string jump = "";
     // If ; present
     if (semicolon_pos != std::string::npos)
-        jump = this->current_command.substr(semicolon_pos + 1, this->current_command.size() - semicolon_pos);
+        jump = this->current_command.substr(semicolon_pos + 1, this->current_command.size() - 1 - semicolon_pos);
 
     // Either return a jump or an empty string
     return jump;
