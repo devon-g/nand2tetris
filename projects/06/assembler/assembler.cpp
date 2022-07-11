@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "code.h"
+#include "symboltable.h"
 
 int main(int argc, char** argv)
 {
@@ -14,10 +15,12 @@ int main(int argc, char** argv)
 
     Parser p(argv[1]);
     Code c;
+    SymbolTable s;
 
     // Define variables for command components
     // Symbols
     std::string symbol;
+    std::string label;
 
     // Bits
     uint16_t symbol_bits;
@@ -26,7 +29,34 @@ int main(int argc, char** argv)
     uint16_t jump_bits;
     std::bitset<16> command_bits;
 
-    // Parse and convert every command to machine language
+    // First pass: extract symbols and store them in the symbol table
+    int current_program_line = 0;
+    while (p.hasMoreCommands())
+    {
+        p.advance();
+
+        // Add symbols from L_COMMANDS to symbol table
+        if (p.commandType() == COMMAND_TYPE::L_COMMAND)
+        {
+            // Get label: (Xxx)
+            label = p.getCurrentCommand();
+            // Save symbol Xxx
+            symbol = label.substr(1, label.size() - 2);
+
+            // If symbol is not already in symbol table we add it
+            if (!s.contains(symbol))
+                s.addEntry(symbol, current_program_line);
+        }
+        // Increment program line ignoring L_COMMANDs and INVALID_COMMANDS
+        else if (p.commandType() != COMMAND_TYPE::INVALID_COMMAND)
+            current_program_line++;
+    }
+
+    // Reset the parser for second pass.
+    p.reset();
+
+    // Second pass: parse and convert every command to machine language
+    int current_symbol_address = 0x0010;
     while (p.hasMoreCommands())
     {
         p.advance();
@@ -36,12 +66,24 @@ int main(int argc, char** argv)
             case COMMAND_TYPE::A_COMMAND:
                 // Get symbol mnemonic and check if it is a number
                 symbol = p.symbol();                
+                // If the A_COMMAND symbol is numeric, convert it directly to
+                // bits
                 if (symbol.find_first_not_of("1234567890") == std::string::npos)
                     symbol_bits = static_cast<uint16_t>(std::stoi(symbol));
+                else // Look up symbol in symbol table and then convert to bits
+                {
+                    // If symbol is not present in symbol table, add it at next
+                    // available memory address
+                    if (!s.contains(symbol))
+                    {
+                        s.addEntry(symbol, current_symbol_address);
+                        current_symbol_address++;
+                    }
+                    symbol_bits = static_cast<uint16_t>(s.getAddress(symbol));
+                }
                 // Build command bitset for A_COMMAND
                 command_bits = symbol_bits;
                 command_bits[15] = 0;
-                // TODO: Later we will handle symbols
                 // Add A_COMMAND to output file
                 output_file << command_bits << std::endl;
                 break;
@@ -57,7 +99,6 @@ int main(int argc, char** argv)
                 // ADD C_COMMAND to output file
                 output_file << command_bits << std::endl;
                 break;
-            case COMMAND_TYPE::L_COMMAND: break;
             default: break;
         }
     }
