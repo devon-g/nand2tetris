@@ -1,9 +1,9 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include "COMMAND_TYPE.h"
 #include <fstream>
 #include <string>
-#include <COMMAND_TYPE.h>
 
 class Parser
 {
