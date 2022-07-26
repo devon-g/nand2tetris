@@ -1,0 +1,3 @@
+/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug/CMakeFiles/assembler.dir
+/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug/CMakeFiles/edit_cache.dir
+/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug/CMakeFiles/rebuild_cache.dir

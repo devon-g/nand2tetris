@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug",
+  "command": "/usr/bin/c++   -g -std=gnu++20 -o CMakeFiles/assembler.dir/main.cpp.o -c /home/devon/repos/nand2tetris/projects/06/assembler/main.cpp",
+  "file": "/home/devon/repos/nand2tetris/projects/06/assembler/main.cpp"
+},
+{
+  "directory": "/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug",
+  "command": "/usr/bin/c++   -g -std=gnu++20 -o CMakeFiles/assembler.dir/Code.cpp.o -c /home/devon/repos/nand2tetris/projects/06/assembler/Code.cpp",
+  "file": "/home/devon/repos/nand2tetris/projects/06/assembler/Code.cpp"
+},
+{
+  "directory": "/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug",
+  "command": "/usr/bin/c++   -g -std=gnu++20 -o CMakeFiles/assembler.dir/Parser.cpp.o -c /home/devon/repos/nand2tetris/projects/06/assembler/Parser.cpp",
+  "file": "/home/devon/repos/nand2tetris/projects/06/assembler/Parser.cpp"
+},
+{
+  "directory": "/home/devon/repos/nand2tetris/projects/06/assembler/build/linux-debug",
+  "command": "/usr/bin/c++   -g -std=gnu++20 -o CMakeFiles/assembler.dir/SymbolTable.cpp.o -c /home/devon/repos/nand2tetris/projects/06/assembler/SymbolTable.cpp",
+  "file": "/home/devon/repos/nand2tetris/projects/06/assembler/SymbolTable.cpp"
+}
+]
